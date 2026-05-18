@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tim Yeo — Introvert Coach · Homepage Revamp</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      ember:    { DEFAULT:'#D54A2F', deep:'#8A2A1C' },
+      sunrise:  { DEFAULT:'#E5A402', soft:'#F5C84B' },
+      ink:      { DEFAULT:'#2B2B52', deep:'#1A1A3A' },
+      paper:    { DEFAULT:'#F5F0D3', soft:'#FAF6E1' },
+      charcoal: '#1E1E1E',
+    },
+    fontFamily: {
+      display: ['Literata','ui-serif','Georgia','serif'],
+      sans:    ['Basier Circle','ui-sans-serif','system-ui','sans-serif'],
+      reading: ['Atkinson Hyperlegible','ui-sans-serif','system-ui','sans-serif'],
+      mono:    ['ui-monospace','SFMono-Regular','Menlo','monospace'],
+    },
+  } }
+}
+</script>
+<style>
+  html, body { background: var(--tqa-paper); color: var(--tqa-charcoal); }
+  body { font-family: 'Basier Circle', ui-sans-serif, system-ui, sans-serif; }
+  h1,h2,h3,h4,h5,h6 { margin: 0; }
+  .font-display { font-family: 'Literata', ui-serif, Georgia, serif; }
+  .font-sans    { font-family: 'Basier Circle', ui-sans-serif, system-ui, sans-serif; }
+  .font-reading { font-family: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif; }
+  .font-mono    { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  ::selection { background: var(--tqa-sunrise); color: var(--tqa-ink); }
+  /* Restrict default Tailwind reset for forms */
+  input, button, textarea { font-family: inherit; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="Navigation.jsx"></script>
+<script type="text/babel" src="Hero.jsx"></script>
+<script type="text/babel" src="Sections1.jsx"></script>
+<script type="text/babel" src="Sections2.jsx"></script>
+<script type="text/babel" src="Sections3.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "heroVariant": "portraitsplit",
+  "showThesisBand": true,
+  "showSegmenter": true,
+  "showToni": true,
+  "showStartHere": true,
+  "showSchool": true,
+  "showPlaybooks": true,
+  "stickyToni": true,
+  "accentEmber": "#D54A2F"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [tweaks, setTweaks] = useTweaks(TWEAK_DEFAULTS);
+
+  // live-apply ember accent for tweak previewing
+  React.useEffect(() => {
+    document.documentElement.style.setProperty("--tqa-ember", tweaks.accentEmber || "#D54A2F");
+  }, [tweaks.accentEmber]);
+
+  const Hero =
+    tweaks.heroVariant === "magazine" ? HeroMagazine :
+    tweaks.heroVariant === "masthead" ? HeroMasthead :
+    tweaks.heroVariant === "portraitsplit" ? HeroPortraitSplit :
+    HeroEditorial;
+
+  return (
+    <div data-screen-label="Homepage">
+      <Navigation />
+      <Hero />
+      {tweaks.showSegmenter && <Segmenter />}
+      {tweaks.showThesisBand && <ThesisBand />}
+      <SocialProofStrip />
+      <SoundFamiliar />
+      <CoachingSummary />
+      {tweaks.showToni && <ToniBlock />}
+      <BookBlock />
+      <LatestWriting />
+      {tweaks.showStartHere && <StartHere />}
+      {tweaks.showSchool && <SchoolBlock />}
+      {tweaks.showPlaybooks && <PlaybooksBand />}
+      <NewsletterBand />
+      <ElsewhereStrip />
+      <FooterRev />
+      {tweaks.stickyToni && <ToniBubble />}
+
+      <TweaksPanel title="Tweaks" defaultOpen={false}>
+        <TweakSection title="Hero">
+          <TweakRadio
+            label="Hero variant"
+            value={tweaks.heroVariant}
+            onChange={(v) => setTweaks({ heroVariant: v })}
+            options={[
+              { value: "editorial", label: "A — Editorial split" },
+              { value: "magazine",  label: "B — Magazine cover" },
+              { value: "masthead",  label: "C — Full-bleed masthead" },
+              { value: "portraitsplit", label: "D — Portrait split (NEW)" },
+            ]}
+          />
+          <TweakColor
+            label="Ember accent"
+            value={tweaks.accentEmber}
+            onChange={(v) => setTweaks({ accentEmber: v })}
+          />
+        </TweakSection>
+
+        <TweakSection title="Sections">
+          <TweakToggle label="'I want to…' segmenter"
+            checked={tweaks.showSegmenter}
+            onChange={(v) => setTweaks({ showSegmenter: v })} />
+          <TweakToggle label="Thesis band"
+            checked={tweaks.showThesisBand}
+            onChange={(v) => setTweaks({ showThesisBand: v })} />
+          <TweakToggle label="Toni block"
+            checked={tweaks.showToni}
+            onChange={(v) => setTweaks({ showToni: v })} />
+          <TweakToggle label="Start here tiles"
+            checked={tweaks.showStartHere}
+            onChange={(v) => setTweaks({ showStartHere: v })} />
+          <TweakToggle label="School grid"
+            checked={tweaks.showSchool}
+            onChange={(v) => setTweaks({ showSchool: v })} />
+          <TweakToggle label="Playbooks band"
+            checked={tweaks.showPlaybooks}
+            onChange={(v) => setTweaks({ showPlaybooks: v })} />
+        </TweakSection>
+
+        <TweakSection title="Chrome">
+          <TweakToggle label="Sticky Toni bubble"
+            checked={tweaks.stickyToni}
+            onChange={(v) => setTweaks({ stickyToni: v })} />
+        </TweakSection>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* Brand typefaces */
+@font-face {
+  font-family: "Literata";
+  src: url("/fonts/Literata-Variable.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Literata";
+  src: url("/fonts/Literata-VariableItalic.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Basier Circle";
+  src: url("/fonts/BasierCircle-Regular.otf") format("opentype"),
+    url("/fonts/BasierCircle-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Basier Circle";
+  src: url("/fonts/BasierCircle-SemiBold.otf") format("opentype"),
+    url("/fonts/BasierCircle-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Basier Circle";
+  src: url("/fonts/BasierCircle-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("/fonts/AtkinsonHyperlegible-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --tqa-ember: #d54a2f;
+  --tqa-ember-deep: #8a2a1c;
+  --tqa-sunrise: #e5a402;
+  --tqa-sunrise-soft: #f5c84b;
+  --tqa-ink: #2b2b52;
+  --tqa-ink-deep: #1a1a3a;
+  --tqa-paper: #f5f0d3;
+  --tqa-paper-soft: #faf6e1;
+  --tqa-charcoal: #1e1e1e;
+  --neutral-500: #8a8572;
+  --neutral-700: #4a4638;
+  --white: #ffffff;
+}
+
+@theme inline {
+  --color-ember: #d54a2f;
+  --color-ember-deep: #8a2a1c;
+  --color-ember-400: #e27a60;
+  --color-ember-200: #f4b5a6;
+  --color-ember-100: #fce4dd;
+
+  --color-sunrise: #e5a402;
+  --color-sunrise-soft: #f5c84b;
+
+  --color-ink: #2b2b52;
+  --color-ink-deep: #1a1a3a;
+  --color-ink-500: #5a5a82;
+  --color-ink-300: #9a9ab8;
+
+  --color-paper: #f5f0d3;
+  --color-paper-soft: #faf6e1;
+  --color-paper-200: #e8e1be;
+
+  --color-charcoal: #1e1e1e;
+  --color-warm-500: #8a8572;
+  --color-warm-700: #4a4638;
+
+  --font-display: "Literata", ui-serif, Georgia, serif;
+  --font-sans: "Basier Circle", ui-sans-serif, system-ui, sans-serif;
+  --font-reading: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --tracking-wider2: 0.18em;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper font-sans text-warm-700 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply m-0 text-charcoal;
+  }
+
+}
+
+::selection {
+  background: var(--tqa-sunrise);
+  color: var(--tqa-ink);
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-xs font-bold tracking-wider2 text-charcoal uppercase;
+  }
+
+  .display-headline {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+
+  /* Contain Tailwind UI fixed/absolute headers so they never overlay the site nav */
+  .tailwind-showcase-sandbox {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transform: translateZ(0);
+    z-index: 0;
+  }
+
+  .tailwind-showcase-sandbox header,
+  .tailwind-showcase-sandbox nav[aria-label="Global"] {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    z-index: 1 !important;
+  }
+
+  .tailwind-showcase-sandbox .fixed,
+  .tailwind-showcase-sandbox .sticky {
+    position: absolute !important;
+  }
+
+  .tailwind-showcase-block {
+    --tw-ring-color: color-mix(in srgb, var(--tqa-charcoal) 12%, transparent);
+  }
+
+  .tailwind-showcase-block a:not([class*="bg-"]) {
+    color: var(--tqa-ember);
+  }
+
+  .tailwind-showcase-block a:not([class*="bg-"]):hover {
+    color: var(--tqa-ember-deep);
+  }
+}

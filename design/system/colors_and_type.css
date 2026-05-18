@@ -1,0 +1,314 @@
+/* ==========================================================================
+   The Quiet Achiever — Design Tokens
+   Source of truth: book cover palette (Ember red / Sunrise yellow / Ink navy
+   / Paper cream) + Tailwind structural scales from the website codebase.
+   ========================================================================== */
+
+/* ---------- Brand typefaces ---------- */
+/* Literata — editorial display serif. Variable font covers all weights. */
+@font-face {
+  font-family: "Literata";
+  src: url("fonts/Literata-Variable.ttf") format("truetype-variations"),
+       url("fonts/Literata-Variable.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Literata";
+  src: url("fonts/Literata-VariableItalic.ttf") format("truetype-variations"),
+       url("fonts/Literata-VariableItalic.ttf") format("truetype");
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Basier Circle — primary body + UI sans (geometric, warm). */
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-Regular.otf") format("opentype"),
+       url("fonts/BasierCircle-Regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-RegularItalic.otf") format("opentype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-Medium.otf") format("opentype");
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-MediumItalic.otf") format("opentype");
+  font-weight: 500; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-SemiBold.otf") format("opentype"),
+       url("fonts/BasierCircle-SemiBold.ttf") format("truetype");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-SemiBoldItalic.otf") format("opentype");
+  font-weight: 600; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-Bold.otf") format("opentype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Basier Circle";
+  src: url("fonts/BasierCircle-BoldItalic.otf") format("opentype");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+/* Atkinson Hyperlegible — accessibility-forward sans for long reading
+   passages, captions, footnotes. */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("fonts/AtkinsonHyperlegible-Regular.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("fonts/AtkinsonHyperlegible-Italic.ttf") format("truetype");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("fonts/AtkinsonHyperlegible-Bold.ttf") format("truetype");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("fonts/AtkinsonHyperlegible-BoldItalic.ttf") format("truetype");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+:root {
+  /* ---------- Brand palette (book cover — primary system) ---------- */
+  --tqa-ember:       #D54A2F;  /* Primary — the red body of the book */
+  --tqa-ember-deep:  #8A2A1C;  /* Subtitle maroon — for accents on cream */
+  --tqa-sunrise:     #E5A402;  /* Warm ochre — the yellow headphone panel */
+  --tqa-sunrise-soft:#F5C84B;  /* Lighter tint for washes */
+  --tqa-ink:         #2B2B52;  /* Deep navy spine */
+  --tqa-ink-deep:    #1A1A3A;  /* Pressed / footer variant */
+  --tqa-paper:       #F5F0D3;  /* Cream paper base — warm off-white */
+  --tqa-paper-soft:  #FAF6E1;  /* Slightly lighter cream */
+  --tqa-charcoal:    #1E1E1E;  /* Byline charcoal — near-black on cream */
+
+  /* ---------- Neutral scale (warm, derived from paper base) ---------- */
+  --neutral-50:  #FAF6E1;   /* Softest warm surface */
+  --neutral-100: #F5F0D3;   /* Paper — primary warm bg */
+  --neutral-200: #E8E1BE;   /* Warm border */
+  --neutral-300: #C9C2A4;
+  --neutral-500: #8A8572;   /* Body on cream */
+  --neutral-700: #4A4638;
+  --neutral-900: #1E1E1E;   /* Headings */
+
+  --white: #FFFFFF;
+  --black: #000000;
+
+  /* ---------- Semantic roles ---------- */
+  --color-bg:             var(--tqa-paper);
+  --color-bg-muted:       var(--tqa-paper-soft);
+  --color-bg-plain:       var(--white);
+  --color-bg-invert:      var(--tqa-ink);
+  --color-bg-accent:      var(--tqa-ember);
+  --color-bg-sunrise:     var(--tqa-sunrise);
+
+  --color-fg:             var(--tqa-charcoal);    /* Headings, strong body */
+  --color-fg-body:        var(--neutral-700);     /* Body copy on cream */
+  --color-fg-muted:       var(--neutral-500);
+  --color-fg-invert:      var(--tqa-paper);       /* Cream on navy/ember */
+  --color-fg-invert-muted:#D9D3B2;                /* Soft cream on navy */
+
+  --color-accent:         var(--tqa-ember);       /* Primary action + link */
+  --color-accent-hover:   var(--tqa-ember-deep);  /* Hover = darker maroon */
+  --color-accent-soft:    rgba(213, 74, 47, 0.12);/* Ember wash */
+
+  --color-secondary:      var(--tqa-ink);         /* Secondary action */
+  --color-highlight:      var(--tqa-sunrise);     /* Highlight pen / badge */
+
+  --color-border:         var(--neutral-200);
+  --color-border-strong:  var(--neutral-900);
+
+  /* ---------- Typography ---------- */
+  /* Three brand typefaces:
+     • Literata            — editorial serif for H1/H2/blockquotes/pull-quotes
+     • Basier Circle       — primary sans for UI, body, buttons, eyebrows
+     • Atkinson Hyperlegible — long-form reading passages, captions, footnotes
+       (accessibility-forward; used when copy must be maximally scannable
+       for introverted readers working through the book's exercises). */
+  --font-display: "Literata", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans:    "Basier Circle", ui-sans-serif, system-ui, -apple-system,
+                  BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+                  Arial, sans-serif;
+  --font-reading: "Atkinson Hyperlegible", ui-sans-serif, system-ui,
+                  -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif:   var(--font-display);
+  --font-mono:    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                  "Liberation Mono", "Courier New", monospace;
+
+  /* Weights — Tailwind names used in components */
+  --weight-normal:    400;
+  --weight-medium:    500;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+  --weight-extrabold: 800;
+
+  /* Type scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;    /* Book-cover-scale display */
+
+  --leading-tight:   1.05;  /* Book cover headline is very tight */
+  --leading-snug:    1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:   2;
+
+  --tracking-tighter:-0.03em;
+  --tracking-tight:  -0.015em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-wider:  0.18em;  /* "TIM YEO" wordmark spacing */
+
+  /* ---------- Spacing ---------- */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  --container: 80rem;
+
+  /* ---------- Radii ---------- */
+  /* The book object has hard corners — we keep radii small + pragmatic
+     and reserve rounded-full for people/avatars. */
+  --radius-sm:   0.125rem;
+  --radius:      0.25rem;   /* Buttons — tighter than before */
+  --radius-lg:   0.375rem;
+  --radius-xl:   0.5rem;    /* Cards */
+  --radius-2xl:  0.75rem;   /* Hero images */
+  --radius-full: 9999px;
+
+  /* ---------- Shadow ---------- */
+  /* Book-object feel: slightly warmer, lower, softer shadows. */
+  --shadow-sm: 0 1px 2px 0 rgb(30 30 30 / 0.06);
+  --shadow:    0 1px 3px 0 rgb(30 30 30 / 0.08), 0 1px 2px -1px rgb(30 30 30 / 0.08);
+  --shadow-md: 0 4px 10px -2px rgb(30 30 30 / 0.08);
+  --shadow-lg: 0 12px 24px -6px rgb(30 30 30 / 0.12);
+  --shadow-xl: 0 20px 40px -12px rgb(30 30 30 / 0.18);
+  --ring-hairline: 0 0 0 1px rgb(30 30 30 / 0.06);
+}
+
+/* ==========================================================================
+   Base + semantic element styles
+   ========================================================================== */
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-fg-body);
+  background: var(--color-bg);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Display headings use the serif — matches the book cover's editorial feel.
+   Titles are set in sentence case ("The Quiet Achiever"), NOT all caps. */
+h1, .h1 {
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-5xl);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+}
+@media (min-width: 640px) { h1, .h1 { font-size: var(--text-6xl); } }
+@media (min-width: 768px) { h1, .h1 { font-size: var(--text-7xl); } }
+
+h2, .h2 {
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-3xl);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-snug);
+}
+@media (min-width: 640px) { h2, .h2 { font-size: var(--text-4xl); } }
+
+h3, .h3 {
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+}
+
+/* Eyebrows + bylines — the "TIM YEO" treatment:
+   uppercase, wide-tracked, sans, charcoal. */
+.eyebrow, .byline {
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
+.eyebrow.on-dark { color: var(--color-fg-invert); }
+.eyebrow.ember   { color: var(--color-accent); }
+
+p, .body {
+  color: var(--color-fg-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+
+.lede {
+  color: var(--color-fg);
+  font-size: var(--text-xl);
+  line-height: var(--leading-normal);
+}
+
+/* Maroon accent — the "(without pretending to be an extrovert)" treatment.
+   Use for parenthetical qualifiers, strikethroughs, editorial asides. */
+.accent-maroon { color: var(--tqa-ember-deep); font-weight: var(--weight-semibold); }
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { color: var(--color-accent-hover); text-decoration: underline; }
+
+blockquote {
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-relaxed);
+}
+
+code, pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}

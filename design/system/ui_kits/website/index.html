@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Quiet Achiever — UI Kit</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      ember:      { DEFAULT:'#D54A2F', deep:'#8A2A1C', 400:'#E27A60', 200:'#F4B5A6', 100:'#FCE4DD' },
+      sunrise:    { DEFAULT:'#E5A402', soft:'#F5C84B' },
+      ink:        { DEFAULT:'#2B2B52', deep:'#1A1A3A', 500:'#5A5A82', 300:'#9A9AB8' },
+      paper:      { DEFAULT:'#F5F0D3', soft:'#FAF6E1', 200:'#E8E1BE' },
+      charcoal:   '#1E1E1E',
+      warm:       { 500:'#8A8572', 700:'#4A4638' },
+    },
+    fontFamily: {
+      display: ['Literata','ui-serif','Georgia','serif'],
+      sans:    ['Basier Circle','ui-sans-serif','system-ui','sans-serif'],
+      reading: ['Atkinson Hyperlegible','ui-sans-serif','system-ui','sans-serif'],
+    },
+    letterSpacing: { wider2: '.18em' },
+  } }
+}
+</script>
+<style>
+  body { font-family: 'Basier Circle', ui-sans-serif, system-ui, sans-serif; background:#F5F0D3; color:#1E1E1E; }
+  h1,h2,h3,h4,h5,h6 { margin: 0; }
+  .display { font-family: 'Literata', ui-serif, Georgia, serif; }
+  .reading { font-family: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif; }
+  .eyebrow { letter-spacing:.18em; text-transform:uppercase; font-weight:700; font-size:12px; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="Hero.jsx"></script>
+<script type="text/babel" src="Content.jsx"></script>
+<script type="text/babel" src="Footer.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const NAV = [
+  { name: 'School', href: '#school' },
+  { name: 'Coaching', href: '#coaching' },
+  { name: 'Book', href: '#book' },
+  { name: 'Podcast', href: '#podcast' },
+  { name: 'About', href: '#about' },
+];
+
+const BOOK_OFFERS = [
+  { subheading:'eBook', price:'$19', suffix:'USD', features:['Instant download, DRM-free','Lifetime updates','PDF + ePub'], cta:'Buy eBook' },
+  { subheading:'Audiobook + eBook', price:'$29', suffix:'USD', features:['Narrated by the author','~4 hours of audio','Lifetime updates'], cta:'Buy now', badge:'Best value' },
+  { subheading:'Audiobook only', price:'$22', suffix:'USD', features:['Narrated by the author','~4 hours of audio','Listen on any device'], cta:'Buy audiobook' },
+];
+
+function Toast({ msg, onDismiss }) {
+  React.useEffect(() => { const t = setTimeout(onDismiss, 2400); return () => clearTimeout(t); }, [msg]);
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink-deep text-paper px-5 py-3 rounded-md shadow-lg text-sm z-50">
+      {msg}
+    </div>
+  );
+}
+
+function App() {
+  const [toast, setToast] = React.useState(null);
+  const show = (msg) => setToast(msg);
+  return (
+    <>
+      <Navigation items={NAV} onLogin={() => show('Log in — would redirect to Circle.so')} />
+      <Masthead onBuy={() => show('Buy the book — scrolling to pricing')} onWatch={() => show('▶︎ Playing intro video')} />
+      <BookHero onBuy={() => show('Buy the book — scrolling to pricing')} />
+      <IntroBand />
+      <TopicsGrid />
+      <TestimonialLargeAvatar />
+      <Feature />
+      <PricingGroup title="eBook and audiobook" items={BOOK_OFFERS} onBuy={(name) => show(`Add ${name} to cart`)} />
+      <Footer />
+      {toast && <Toast msg={toast} onDismiss={() => setToast(null)} />}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

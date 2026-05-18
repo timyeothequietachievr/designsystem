@@ -1,0 +1,9 @@
+v0.1 — 2026-05-18
+
+Initial public design system release:
+
+- `/` design system overview
+- `/visual-library` category-based component browser
+- `/preview/cXXX` individual component previews
+- `/component-catalog.json` generated catalog for agents and tooling
+- TQA brand tokens, primitives, production sections, and Tailwind UI kits

@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body{margin:0;padding:22px;background:var(--tqa-paper);font-family:var(--font-sans)}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .sw{display:flex;flex-direction:column;gap:6px}
+  .chip{aspect-ratio:1.35;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(30,30,30,.08);position:relative;overflow:hidden}
+  .chip span{position:absolute;left:8px;bottom:6px;font-family:var(--font-mono);font-size:10px;opacity:.85}
+  .nm{font-size:11px;color:var(--tqa-charcoal);font-weight:600;letter-spacing:.01em}
+  .role{font-size:10px;color:var(--neutral-500);letter-spacing:.02em}
+  h4{margin:0 0 4px;font:700 10px/1 var(--font-sans);letter-spacing:.18em;text-transform:uppercase;color:var(--tqa-charcoal)}
+  .sub{margin:0 0 14px;font-family:var(--font-display);font-style:italic;font-size:13px;color:var(--neutral-700)}
+</style></head><body>
+<h4>Brand palette</h4>
+<div class="sub">drawn from the book cover — ember red, sunrise yellow, ink navy, paper cream.</div>
+<div class="grid">
+  <div class="sw">
+    <div class="chip" style="background:#D54A2F;color:#F5F0D3"><span>#D54A2F</span></div>
+    <div class="nm">ember</div><div class="role">primary · action</div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#8A2A1C;color:#F5F0D3"><span>#8A2A1C</span></div>
+    <div class="nm">ember deep</div><div class="role">hover · accent copy</div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#E5A402;color:#2B2B52"><span>#E5A402</span></div>
+    <div class="nm">sunrise</div><div class="role">highlight · badge</div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#2B2B52;color:#F5F0D3"><span>#2B2B52</span></div>
+    <div class="nm">ink</div><div class="role">secondary · dark bg</div>
+  </div>
+  <div class="sw">
+    <div class="chip" style="background:#F5F0D3;color:#1E1E1E;box-shadow:inset 0 0 0 1px #E8E1BE"><span>#F5F0D3</span></div>
+    <div class="nm">paper</div><div class="role">default surface</div>
+  </div>
+</div>
+</body></html>

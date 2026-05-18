@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 72 48" aria-label="hipages">
+  <title>hipages</title>
+  <rect x="0" y="8" width="40" height="32" rx="6" fill="#000000"/>
+  <text x="8" y="32" fill="#FFFFFF" font-family="system-ui,sans-serif" font-size="20" font-weight="700">hi</text>
+</svg>
