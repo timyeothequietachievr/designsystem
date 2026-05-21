@@ -4,7 +4,8 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
-const base = "https://websitetqa.thequietachievr.com";
+const base =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://designsystem-weld-six.vercel.app";
 const previewBase = `${base}/component-previews`;
 
 function previewImageUrl(code) {
