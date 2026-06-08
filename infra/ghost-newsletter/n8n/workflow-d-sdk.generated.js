@@ -172,6 +172,12 @@ const pageId = row.id;
 
 if (!slug || !started || !email) return [];
 
+const rawTags = row.property_newsletter_tags ?? [];
+const tagNames = Array.isArray(rawTags)
+  ? rawTags.map((t) => (typeof t === 'string' ? t : t?.name ?? '')).filter(Boolean)
+  : [];
+if (tagNames.includes('unsubscribed')) return [];
+
 const steps = config.stepsBySlug[slug] ?? [];
 const startDate = String(started).slice(0, 10);
 const today = config.melbourneToday;
@@ -239,10 +245,13 @@ const fetchTemplate = node({
     name: 'Fetch email template',
     parameters: {
       method: 'GET',
-      url: expr(`={{ "${SITE_URL}/api/internal/drip-template/" + $json.templateId }}`),
+      url: expr(`={{ "${SITE_URL}/api/internal/drip-template/" + $('Plan due email').item.json.templateId + "?email=" + encodeURIComponent($('Plan due email').item.json.email) + "&memberId=" + encodeURIComponent($('Plan due email').item.json.memberId || "") + "&ctaInterest=" + encodeURIComponent($('Plan due email').item.json.ctaInterest || "") }}`),
+      authentication: 'genericCredentialType',
+      genericAuthType: 'httpBearerAuth',
       options: { response: { response: { responseFormat: 'json' } } },
     },
     position: [1760, -80],
+    credentials: { httpBearerAuth: newCredential('Newsletter Admin Bearer', 'Z4hLk58jMTj53zmI') },
   },
   output: [{ html: '<p>Hi</p>' }],
 });

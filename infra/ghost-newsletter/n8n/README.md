@@ -12,7 +12,10 @@ SDK source: `workflow-b-sdk.generated.js` (deploy via n8n MCP `create_workflow_f
 | `workflow-b-notion-to-ghost-scheduled.json` | Every 15 minutes | **AI Publish Date Set** → Ghost scheduled post → **AI Scheduled** |
 | `workflow-c-ghost-published-to-notion.json` | Webhook `POST /ghost-post-published` | Ghost published → Notion **Published** + URLs |
 | `workflow-d-sdk.generated.js` | Daily 9am Melbourne | **Live:** [CRM drip campaigns](https://thequietachievr.app.n8n.cloud/workflow/IhnSto3eefj2poXU) — reads 📭 Email Campaigns + 📬 Campaign Steps |
+| `workflow-e-ghost-unsubscribe-sdk.generated.js` | Webhook `POST /ghost-member-unsubscribed` | **Live:** [E — Ghost unsubscribe](https://thequietachievr.app.n8n.cloud/workflow/H4UHnUPqNORQGu1t) → site opt-out API |
 | `workflow-d-daily-drip.json` | (legacy stub) | Replaced by SDK workflow above |
+
+**Unsubscribe:** Drip emails link to `GET /api/unsubscribe` on websitetqa. Ghost weekly unsubscribes fire Workflow E → `POST /api/newsletter/opt-out` (updates Notion CRM + EmailOctopus). Attach **Newsletter Admin Bearer** (`NEWSLETTER_ADMIN_SECRET`) on Workflow D *Fetch email template* and Workflow E *Sync opt-out to site*.
 
 **Click → tag** is handled by the website (`/api/go/{interest}`), not n8n — see `src/app/api/go/`.
 
