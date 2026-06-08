@@ -1,0 +1,152 @@
+{
+  "name": "Ghost → Notion CRM (new subscriber)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ghost-new-subscriber",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "a1-webhook",
+      "name": "Ghost member.added",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "ghost-new-subscriber"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "c5441716da28820393c9812a85364740",
+          "mode": "id"
+        },
+        "filterType": "json",
+        "filterJson": "={{ JSON.stringify({ property: 'Email', email: { equals: $json.body.member.current.email } }) }}",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "id": "a2-notion-search",
+      "name": "CRM lookup by email",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [220, 0],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "no-page-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3-if-new",
+      "name": "New contact only",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "value": "c5441716da28820393c9812a85364740",
+          "mode": "id"
+        },
+        "title": "={{ $('Ghost member.added').item.json.body.member.current.name || $('Ghost member.added').item.json.body.member.current.email }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Email|email",
+              "emailValue": "={{ $('Ghost member.added').item.json.body.member.current.email }}"
+            },
+            {
+              "key": "Ghost Member ID|rich_text",
+              "textContent": "={{ $('Ghost member.added').item.json.body.member.current.id }}"
+            },
+            {
+              "key": "Origin date|date",
+              "date": "={{ $('Ghost member.added').item.json.body.member.current.created_at }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4-notion-create",
+      "name": "Create CRM row",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [660, -80]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Ghost Member ID|rich_text",
+              "textContent": "={{ $('Ghost member.added').item.json.body.member.current.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a5-notion-update",
+      "name": "Update Ghost Member ID",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [660, 100]
+    }
+  ],
+  "connections": {
+    "Ghost member.added": {
+      "main": [[{ "node": "CRM lookup by email", "type": "main", "index": 0 }]]
+    },
+    "CRM lookup by email": {
+      "main": [[{ "node": "New contact only", "type": "main", "index": 0 }]]
+    },
+    "New contact only": {
+      "main": [
+        [{ "node": "Create CRM row", "type": "main", "index": 0 }],
+        [{ "node": "Update Ghost Member ID", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

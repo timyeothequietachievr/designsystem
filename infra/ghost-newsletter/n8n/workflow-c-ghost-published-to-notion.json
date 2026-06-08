@@ -1,0 +1,132 @@
+{
+  "name": "Ghost published → Notion Content",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ghost-post-published",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "c1-webhook",
+      "name": "Ghost post.published",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "ghost-post-published"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "9f641716da28837eb6e481fad83c190f",
+          "mode": "id"
+        },
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Ghost Post ID|rich_text",
+              "condition": "equals",
+              "richTextValue": "={{ $json.body.post.current.id }}"
+            }
+          ]
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "id": "c2-notion-find",
+      "name": "Find by Ghost Post ID",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [220, 0],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-page-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c2b-if-found",
+      "name": "Content row found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Status|status",
+              "statusValue": "Published"
+            },
+            {
+              "key": "Ghost URL|url",
+              "urlValue": "={{ $('Ghost post.published').item.json.body.post.current.url }}"
+            },
+            {
+              "key": "Published At|date",
+              "date": "={{ $('Ghost post.published').item.json.body.post.current.published_at }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c3-notion-update",
+      "name": "Set Published",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [660, 0]
+    }
+  ],
+  "connections": {
+    "Ghost post.published": {
+      "main": [[{ "node": "Find by Ghost Post ID", "type": "main", "index": 0 }]]
+    },
+    "Find by Ghost Post ID": {
+      "main": [[{ "node": "Content row found", "type": "main", "index": 0 }]]
+    },
+    "Content row found": {
+      "main": [[{ "node": "Set Published", "type": "main", "index": 0 }], []]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,14 @@
+{
+  "posts": [
+    {
+      "title": "{{ $json.title }}",
+      "html": "{{ $json.html }}",
+      "status": "scheduled",
+      "published_at": "{{ $json.publishedAtUtc }}",
+      "visibility": "public",
+      "email_segment": "all",
+      "feature_image": "{{ $json.featureImageUrl }}",
+      "custom_excerpt": "{{ $json.excerpt }}"
+    }
+  ]
+}

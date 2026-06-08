@@ -1,0 +1,28 @@
+{
+  "content": {
+    "databaseId": "9f641716da28837eb6e481fad83c190f",
+    "dataSourceId": "5da41716-da28-8360-b8dc-87068f91f0ab",
+    "url": "https://www.notion.so/9f641716da28837eb6e481fad83c190f"
+  },
+  "crm": {
+    "databaseId": "c5441716da28820393c9812a85364740",
+    "dataSourceId": "83d41716-da28-82a1-aeef-87ee05c5837d",
+    "url": "https://www.notion.so/c5441716da28820393c9812a85364740"
+  },
+  "emailCampaigns": {
+    "databaseId": "36b41716da288011acfadfd6c63c6d17",
+    "dataSourceId": "36b41716-da28-8033-b8c1-000b6961e90b",
+    "url": "https://www.notion.so/36b41716da288011acfadfd6c63c6d17"
+  },
+  "campaignSteps": {
+    "databaseId": "fc820a42bd5148c3989b840171d3b8c8",
+    "dataSourceId": "5d943945-1762-4d17-8a62-5220f1ce2ed5",
+    "url": "https://www.notion.so/fc820a42bd5148c3989b840171d3b8c8"
+  },
+  "workflowB": {
+    "pickupStatus": "AI Publish Date Set",
+    "afterSyncStatus": "AI Scheduled",
+    "publishedStatus": "Published",
+    "publishDateProperty": "Publish Date Newsletter"
+  }
+}
