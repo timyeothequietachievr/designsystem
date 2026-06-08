@@ -1,0 +1,174 @@
+{
+  "name": "CRM drip sequences (daily)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "triggerAtHour": 9 }]
+        }
+      },
+      "id": "d1-schedule",
+      "name": "Daily 9am Melbourne",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "c5441716da28820393c9812a85364740",
+          "mode": "id"
+        },
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Email sequence|select",
+              "condition": "is_not_empty"
+            },
+            {
+              "key": "Sequence stage|select",
+              "condition": "not_equals",
+              "value": "Complete"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2-query",
+      "name": "Active sequences",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d3-loop",
+      "name": "Each contact",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Map Email sequence + Sequence stage → next template id\n// Edit templateMap after adding HTML under infra/ghost-newsletter/email-templates/\nconst row = $input.first().json;\nconst sequence = row.property_email_sequence || 'None';\nconst stage = row.property_sequence_stage || 'Pending';\nconst memberId = row.property_ghost_member_id;\nconst email = row.property_email;\n\nconst templateMap = {\n  Courses: { Pending: 'courses-1', 'Email 1 sent': 'courses-2', 'Email 2 sent': 'courses-3' },\n  Coaching: { Pending: 'coaching-1', 'Email 1 sent': 'coaching-2', 'Email 2 sent': 'coaching-3' },\n};\n\nconst nextTemplate = templateMap[sequence]?.[stage];\nif (!nextTemplate || !email) return [];\n\nconst stageAfter = {\n  Pending: 'Email 1 sent',\n  'Email 1 sent': 'Email 2 sent',\n  'Email 2 sent': 'Complete',\n};\n\nreturn [{ json: { email, memberId, sequence, stage, nextTemplate, nextStage: stageAfter[stage] || 'Complete' } }];"
+      },
+      "id": "d4-plan",
+      "name": "Plan next email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.GHOST_URL }}/ghost/api/admin/members/{{ $json.memberId }}/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "ghostAdminApi",
+        "options": {}
+      },
+      "id": "d5-ghost-check",
+      "name": "Ghost member subscribed?",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.members[0].email_disabled }}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "false" }
+            }
+          ]
+        }
+      },
+      "id": "d6-if-subscribed",
+      "name": "Still subscribed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": \"Tim Yeo <tim@thequietachievr.com>\",\n  \"to\": [{{ JSON.stringify($('Plan next email').item.json.email) }}],\n  \"subject\": {{ JSON.stringify($('Plan next email').item.json.nextTemplate) }},\n  \"html\": \"<p>Replace with template from email-templates/</p>\"\n}",
+        "options": {}
+      },
+      "id": "d7-resend",
+      "name": "Send via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, -80]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Each contact').item.json.id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Sequence stage|select",
+              "selectValue": "={{ $('Plan next email').item.json.nextStage }}"
+            },
+            {
+              "key": "Last sequence email|date",
+              "date": "={{ $now.toISODate() }}"
+            }
+          ]
+        }
+      },
+      "id": "d8-notion-update",
+      "name": "Advance stage",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1540, -80]
+    }
+  ],
+  "connections": {
+    "Daily 9am Melbourne": {
+      "main": [[{ "node": "Active sequences", "type": "main", "index": 0 }]]
+    },
+    "Active sequences": {
+      "main": [[{ "node": "Each contact", "type": "main", "index": 0 }]]
+    },
+    "Each contact": {
+      "main": [[{ "node": "Plan next email", "type": "main", "index": 0 }]]
+    },
+    "Plan next email": {
+      "main": [[{ "node": "Ghost member subscribed?", "type": "main", "index": 0 }]]
+    },
+    "Ghost member subscribed?": {
+      "main": [[{ "node": "Still subscribed", "type": "main", "index": 0 }]]
+    },
+    "Still subscribed": {
+      "main": [[{ "node": "Send via Resend", "type": "main", "index": 0 }]]
+    },
+    "Send via Resend": {
+      "main": [[{ "node": "Advance stage", "type": "main", "index": 0 }]]
+    },
+    "Advance stage": {
+      "main": [[{ "node": "Each contact", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "templateCredsSetupCompleted": false }
+}

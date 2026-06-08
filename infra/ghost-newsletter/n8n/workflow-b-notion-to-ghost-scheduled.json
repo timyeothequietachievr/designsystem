@@ -1,0 +1,197 @@
+{
+  "name": "Notion Content → Ghost scheduled newsletter",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
+      },
+      "id": "b1-schedule",
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "9f641716da28837eb6e481fad83c190f",
+          "mode": "id"
+        },
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "Status|status",
+              "condition": "equals",
+              "statusValue": "AI Publish Date Set"
+            },
+            {
+              "key": "Ghost Post ID|rich_text",
+              "condition": "is_empty"
+            },
+            {
+              "key": "Publish Date Newsletter|date",
+              "condition": "is_not_empty"
+            }
+          ]
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "id": "b2-notion-query",
+      "name": "Pickup AI Publish Date Set",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [220, 0],
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "",
+          "name": "Notion OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b3-split",
+      "name": "Each row",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.notion.com/v1/blocks/{{ $json.id }}/children",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "notionApi",
+        "options": {}
+      },
+      "id": "b4-notion-blocks",
+      "name": "Get page blocks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "/* Paste full file from infra/ghost-newsletter/scripts/notion-blocks-to-html.js */\nconst blocks = $input.first().json.results ?? [];\nfunction richTextToHtml(richText = []) {\n  return richText.map((t) => {\n    let s = (t.plain_text ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');\n    if (t.annotations?.bold) s = `<strong>${s}</strong>`;\n    if (t.annotations?.italic) s = `<em>${s}</em>`;\n    if (t.href) s = `<a href=\"${t.href}\">${s}</a>`;\n    return s;\n  }).join('');\n}\nfunction blockToHtml(block) {\n  const type = block.type;\n  const data = block[type] ?? {};\n  if (type === 'paragraph') return `<p>${richTextToHtml(data.rich_text)}</p>`;\n  if (type === 'heading_1') return `<h1>${richTextToHtml(data.rich_text)}</h1>`;\n  if (type === 'heading_2') return `<h2>${richTextToHtml(data.rich_text)}</h2>`;\n  if (type === 'heading_3') return `<h3>${richTextToHtml(data.rich_text)}</h3>`;\n  if (type === 'quote') return `<blockquote>${richTextToHtml(data.rich_text)}</blockquote>`;\n  if (type === 'divider') return '<hr />';\n  if (type === 'image') {\n    const url = data.file?.external?.url ?? data.file?.file?.url;\n    return url ? `<figure><img src=\"${url}\" alt=\"\" /></figure>` : '';\n  }\n  return '';\n}\nconst html = blocks.map(blockToHtml).filter(Boolean).join('\\n');\nconst page = $('Each row').item.json;\nconst title = page.property_content_title ?? page.name ?? 'Newsletter';\nconst publishStart = page.property_publish_date_newsletter?.start ?? page['Publish Date Newsletter'];\nreturn [{ json: { html, title, publishStart, pageId: page.id } }];"
+      },
+      "id": "b5-html",
+      "name": "Blocks to HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $json.publishStart }}",
+        "format": "custom",
+        "customFormat": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        "options": {
+          "timezone": "Australia/Melbourne"
+        }
+      },
+      "id": "b6-date",
+      "name": "Melbourne to UTC ISO",
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ghost-production-6938.up.railway.app/ghost/api/admin/posts/?source=html",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "ghostAdminApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"posts\": [{\n    \"title\": {{ JSON.stringify($('Blocks to HTML').item.json.title) }},\n    \"html\": {{ JSON.stringify($('Blocks to HTML').item.json.html) }},\n    \"status\": \"scheduled\",\n    \"published_at\": {{ JSON.stringify($json.data) }},\n    \"visibility\": \"public\",\n    \"email_segment\": \"all\"\n  }]\n}",
+        "options": {}
+      },
+      "id": "b7-ghost-create",
+      "name": "Create scheduled post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 0]
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('Blocks to HTML').item.json.pageId }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Ghost Post ID|rich_text",
+              "textContent": "={{ $json.posts[0].id }}"
+            },
+            {
+              "key": "Ghost URL|url",
+              "urlValue": "={{ $json.posts[0].url }}"
+            },
+            {
+              "key": "Status|status",
+              "statusValue": "AI Scheduled"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8-notion-update",
+      "name": "Mark AI Scheduled",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1540, 0]
+    }
+  ],
+  "connections": {
+    "Every 15 minutes": {
+      "main": [[{ "node": "Pickup AI Publish Date Set", "type": "main", "index": 0 }]]
+    },
+    "Pickup AI Publish Date Set": {
+      "main": [[{ "node": "Each row", "type": "main", "index": 0 }]]
+    },
+    "Each row": {
+      "main": [
+        [{ "node": "Get page blocks", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Get page blocks": {
+      "main": [[{ "node": "Blocks to HTML", "type": "main", "index": 0 }]]
+    },
+    "Blocks to HTML": {
+      "main": [[{ "node": "Melbourne to UTC ISO", "type": "main", "index": 0 }]]
+    },
+    "Melbourne to UTC ISO": {
+      "main": [[{ "node": "Create scheduled post", "type": "main", "index": 0 }]]
+    },
+    "Create scheduled post": {
+      "main": [[{ "node": "Mark AI Scheduled", "type": "main", "index": 0 }]]
+    },
+    "Mark AI Scheduled": {
+      "main": [[{ "node": "Each row", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

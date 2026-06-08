@@ -1,0 +1,34 @@
+{
+  "courses": {
+    "newsletterTag": "courses-interest",
+    "ghostLabel": "courses-interest",
+    "campaignSlug": "courses",
+    "campaignTrigger": "click:courses",
+    "redirectPath": "/school",
+    "description": "Quiet Leadership School / courses"
+  },
+  "coaching": {
+    "newsletterTag": "coaching-interest",
+    "ghostLabel": "coaching-interest",
+    "campaignSlug": "coaching",
+    "campaignTrigger": "click:coaching",
+    "redirectPath": "/chemistrycall",
+    "description": "1:1 coaching / chemistry call"
+  },
+  "book": {
+    "newsletterTag": "book-interest",
+    "ghostLabel": "book-interest",
+    "campaignSlug": "book-free",
+    "campaignTrigger": "click:book",
+    "redirectPath": "/book",
+    "description": "The Quiet Achiever book"
+  },
+  "playbooks": {
+    "newsletterTag": "playbooks-interest",
+    "ghostLabel": "playbooks-interest",
+    "campaignSlug": "playbook-networking",
+    "campaignTrigger": "click:playbooks",
+    "redirectPath": "/playbooks",
+    "description": "Free playbooks library (default networking playbook campaign)"
+  }
+}
